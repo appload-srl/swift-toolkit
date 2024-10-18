@@ -64,7 +64,7 @@ public struct HTMLDecorationTemplate {
         let padding = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 1)
         return [
             .highlight: .highlight(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha),
-            .underline: .underline(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha),
+            .underline: .underline(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
         ]
     }
 
@@ -75,9 +75,10 @@ public struct HTMLDecorationTemplate {
 
     /// Creates a new decoration template for the `underline` style.
     public static func underline(defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
-        makeTemplate(asHighlight: false, defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
+//        makeTemplate(asHighlight: false, defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
+        makeCustomTemplate(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
     }
-
+    
     /// - Parameter asHighlight: When true, the non active style is of an highlight. Otherwise, it is an underline.
     private static func makeTemplate(asHighlight: Bool, defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
         let className = makeUniqueClassName(key: asHighlight ? "highlight" : "underline")
@@ -107,6 +108,46 @@ public struct HTMLDecorationTemplate {
                 box-sizing: border-box;
             }
             """
+        )
+    }
+    
+    private static func makeCustomTemplate(defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
+        let className = makeUniqueClassName(key: "underline")
+        var lineHeight: CGFloat = 19.2
+        return HTMLDecorationTemplate(
+            layout: .boxes,
+            element: { decoration in
+                let config = decoration.style.config as! Decoration.Style.HighlightConfig
+                let tint = config.tint ?? defaultTint
+                let isActive = config.isActive
+                lineHeight = config.lineHeight ?? lineHeight
+                
+                let beforeStyle = """
+                content: '';
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                background-image: linear-gradient(
+                    to bottom,
+                    transparent \(lineHeight - 2)px,
+                    \(tint.cssValue()) 1px,
+                    \(tint.cssValue()) \(lineHeight)px
+                );
+                background-size: 100% \(lineHeight)px;
+                """
+                
+                let outerDivStyle = "min-height: \(lineHeight + 1)px; position: relative;"
+                
+                return """
+                        <div class="\(className)" style="\(outerDivStyle)">
+                            <div style="\(beforeStyle)"></div>
+                        </div>
+                        """
+            },
+            stylesheet: ""
         )
     }
 

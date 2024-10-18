@@ -107,19 +107,21 @@ public struct Decoration: Hashable {
             .init(id: .highlight, config: HighlightConfig(tint: tint, isActive: isActive))
         }
 
-        public static func underline(tint: UIColor? = nil, isActive: Bool = false) -> Style {
-            .init(id: .underline, config: HighlightConfig(tint: tint, isActive: isActive))
+        public static func underline(tint: UIColor? = nil, isActive: Bool = false, lineHeight: CGFloat?) -> Style {
+            .init(id: .underline, config: HighlightConfig(tint: tint, isActive: isActive, lineHeight: lineHeight))
         }
 
         public struct HighlightConfig: Hashable {
             public var tint: UIColor?
             public var isActive: Bool
-            public init(tint: UIColor? = nil, isActive: Bool = false) {
+            public var lineHeight: CGFloat?
+            public init(tint: UIColor? = nil, isActive: Bool = false, lineHeight: CGFloat? = nil) {
                 self.tint = tint
                 self.isActive = isActive
+                self.lineHeight = lineHeight
             }
         }
-
+        
         public let id: Id
         public let config: AnyHashable?
 
