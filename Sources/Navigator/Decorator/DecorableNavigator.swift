@@ -100,15 +100,15 @@ public struct Decoration: Hashable {
             // Default Readium style IDs.
 
             public static let highlight: Id = "highlight"
-            public static let underline: Id = "underline"
+            public static let note: Id = "note"
         }
 
         public static func highlight(tint: UIColor? = nil, isActive: Bool = false) -> Style {
             .init(id: .highlight, config: HighlightConfig(tint: tint, isActive: isActive))
         }
 
-        public static func underline(tint: UIColor? = nil, isActive: Bool = false, lineHeight: CGFloat?) -> Style {
-            .init(id: .underline, config: HighlightConfig(tint: tint, isActive: isActive, lineHeight: lineHeight))
+        public static func note(tint: UIColor? = nil, isActive: Bool = false) -> Style {
+            .init(id: .note, config: NoteConfig(tint: tint, isActive: isActive))
         }
 
         public struct HighlightConfig: Hashable {
@@ -119,6 +119,16 @@ public struct Decoration: Hashable {
                 self.tint = tint
                 self.isActive = isActive
                 self.lineHeight = lineHeight
+            }
+        }
+        
+        public struct NoteConfig: Hashable {
+            public var tint: UIColor?
+            public var isActive: Bool
+            
+            public init(tint: UIColor? = nil, isActive: Bool = false) {
+                self.tint = tint
+                self.isActive = isActive
             }
         }
         

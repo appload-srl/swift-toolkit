@@ -4,9 +4,8 @@
 //  available in the top-level LICENSE file of the project.
 //
 
-import Foundation
-import SwiftSoup
 import UIKit
+import SwiftSoup
 
 /// An `HTMLDecorationTemplate` renders a `Decoration` into a set of HTML elements and associated stylesheet.
 public struct HTMLDecorationTemplate {
@@ -64,24 +63,22 @@ public struct HTMLDecorationTemplate {
         let padding = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 1)
         return [
             .highlight: .highlight(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha),
-            .underline: .underline(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
+            .note: .note(defaultTint: defaultTint)
         ]
     }
 
     /// Creates a new decoration template for the `highlight` style.
     public static func highlight(defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
-        makeTemplate(asHighlight: true, defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
+        highlightTemplate(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
     }
 
-    /// Creates a new decoration template for the `underline` style.
-    public static func underline(defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
-//        makeTemplate(asHighlight: false, defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
-        makeCustomTemplate(defaultTint: defaultTint, padding: padding, lineWeight: lineWeight, cornerRadius: cornerRadius, alpha: alpha)
+    /// Creates a new decoration template for the `note` style.
+    public static func note(defaultTint: UIColor) -> HTMLDecorationTemplate {
+        noteTemplate(defaultTint: defaultTint)
     }
     
-    /// - Parameter asHighlight: When true, the non active style is of an highlight. Otherwise, it is an underline.
-    private static func makeTemplate(asHighlight: Bool, defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
-        let className = makeUniqueClassName(key: asHighlight ? "highlight" : "underline")
+    private static func highlightTemplate(defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
+        let className = makeUniqueClassName(key: "highlight")
         return HTMLDecorationTemplate(
             layout: .boxes,
             element: { decoration in
@@ -89,11 +86,8 @@ public struct HTMLDecorationTemplate {
                 let tint = config.tint ?? defaultTint
                 let isActive = config.isActive
                 var css = ""
-                if asHighlight || isActive {
+                if isActive {
                     css += "background-color: \(tint.cssValue(alpha: alpha)) !important;"
-                }
-                if !asHighlight || isActive {
-                    css += "border-bottom: \(lineWeight)px solid \(tint.cssValue());"
                 }
                 return "<div class=\"\(className)\" style=\"\(css)\"/>"
             },
@@ -111,46 +105,49 @@ public struct HTMLDecorationTemplate {
         )
     }
     
-    private static func makeCustomTemplate(defaultTint: UIColor, padding: UIEdgeInsets, lineWeight: Int, cornerRadius: Int, alpha: Double) -> HTMLDecorationTemplate {
-        let className = makeUniqueClassName(key: "underline")
-        var lineHeight: CGFloat = 19.2
+    /// Stile nota con banda colorata laterale
+    private static func noteTemplate(
+        defaultTint: UIColor,
+        topMargin: Int = -4,
+        bottomMargin: Int = 0
+    ) -> HTMLDecorationTemplate {
+        let className = makeUniqueClassName(key: "sidemark")
         return HTMLDecorationTemplate(
             layout: .boxes,
+            width: .page,
             element: { decoration in
-                let config = decoration.style.config as! Decoration.Style.HighlightConfig
-                let tint = config.tint ?? defaultTint
-                let isActive = config.isActive
-                lineHeight = config.lineHeight ?? lineHeight
+                let config = decoration.style.config as? Decoration.Style.NoteConfig
+                let tint = config?.tint ?? defaultTint
+                let isActive = config?.isActive
                 
-                let beforeStyle = """
-                content: '';
-                position: absolute;
-                left: 0;
-                bottom: 0;
-                width: 100%;
-                height: 100%;
-                z-index: 0;
-                background-image: linear-gradient(
-                    to bottom,
-                    transparent \(lineHeight - 2)px,
-                    \(tint.cssValue()) 1px,
-                    \(tint.cssValue()) \(lineHeight)px
-                );
-                background-size: 100% \(lineHeight)px;
+                return
                 """
-                
-                let outerDivStyle = "min-height: \(lineHeight + 1)px; position: relative;"
-                
-                return """
-                        <div class="\(className)" style="\(outerDivStyle)">
-                            <div style="\(beforeStyle)"></div>
-                        </div>
-                        """
+                <div>
+                    <div class="sidemark" style="background-color: \(tint.cssValue()) !important; margin-top: \(topMargin)px; margin-bottom: \(bottomMargin)px"></div>
+                </div>
+                """
             },
-            stylesheet: ""
+            stylesheet: """
+            .sidemark {
+                float: left;
+                width: 6px;
+                height: calc(100% + 12px);
+                background-color: var(--tint);
+                margin-left: 8px;
+                border-radius: 3px;
+                max-height: calc(100vh - 20px);
+                overflow: hidden;
+                bottom: 0;
+            }
+            [dir=rtl] .sidemark {
+                float: right;
+                margin-left: 0px;
+                margin-right: 10px;
+            }
+            """
         )
     }
-
+    
     private static var classNamesId = 0
     private static func makeUniqueClassName(key: String) -> String {
         classNamesId += 1
