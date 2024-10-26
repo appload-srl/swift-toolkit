@@ -114,18 +114,15 @@ public struct Decoration: Hashable {
         public struct HighlightConfig: Hashable {
             public var tint: UIColor?
             public var isActive: Bool
-            public var lineHeight: CGFloat?
-            public init(tint: UIColor? = nil, isActive: Bool = false, lineHeight: CGFloat? = nil) {
+            public init(tint: UIColor? = nil, isActive: Bool = false) {
                 self.tint = tint
                 self.isActive = isActive
-                self.lineHeight = lineHeight
             }
         }
         
         public struct NoteConfig: Hashable {
             public var tint: UIColor?
             public var isActive: Bool
-            
             public init(tint: UIColor? = nil, isActive: Bool = false) {
                 self.tint = tint
                 self.isActive = isActive

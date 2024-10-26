@@ -82,13 +82,9 @@ public struct HTMLDecorationTemplate {
         return HTMLDecorationTemplate(
             layout: .boxes,
             element: { decoration in
-                let config = decoration.style.config as! Decoration.Style.HighlightConfig
-                let tint = config.tint ?? defaultTint
-                let isActive = config.isActive
-                var css = ""
-                if isActive {
-                    css += "background-color: \(tint.cssValue(alpha: alpha)) !important;"
-                }
+                let config = decoration.style.config as? Decoration.Style.HighlightConfig
+                let tint = config?.tint ?? defaultTint
+                var css = "background-color: \(tint.cssValue(alpha: alpha)) !important;"
                 return "<div class=\"\(className)\" style=\"\(css)\"/>"
             },
             stylesheet:
@@ -118,7 +114,6 @@ public struct HTMLDecorationTemplate {
             element: { decoration in
                 let config = decoration.style.config as? Decoration.Style.NoteConfig
                 let tint = config?.tint ?? defaultTint
-                let isActive = config?.isActive
                 
                 return
                 """
