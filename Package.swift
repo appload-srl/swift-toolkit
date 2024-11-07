@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.6
 //
 //  Copyright 2021 Readium Foundation. All rights reserved.
 //  Use of this source code is governed by the BSD-style license
@@ -22,7 +22,7 @@ let package = Package(
         .library(name: "ReadiumAdapterGCDWebServer", targets: ["ReadiumAdapterGCDWebServer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/cezheng/Fuzi.git", from: "3.1.3"),
+        .package(url: "https://github.com/appload-srl/Fuzi", exact: "3.1.3-1"),
         // From 1.6.0, the build fails in GitHub actions with Carthage
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", "1.5.1" ..< "1.6.0"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
