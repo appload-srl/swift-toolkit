@@ -21,10 +21,10 @@
     {
       "identity" : "fuzi",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/appload-srl/Fuzi",
+      "location" : "https://github.com/readium/Fuzi.git",
       "state" : {
-        "revision" : "4d6c51731f258a37e069918b70b2de6fe81c8926",
-        "version" : "3.1.3-1"
+        "revision" : "80012a500848828d622ef598b34ca7621b151769",
+        "version" : "3.1.4"
       }
     },
     {
